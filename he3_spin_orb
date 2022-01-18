@@ -1,0 +1,36 @@
+#!/usr/bin/cadabra2
+
+{a,b,c,i,j,k}::Indices;
+{a,b,c,i,j,k}::Integer(1..3);
+{ct, st, th}::Symbol;
+
+
+{d{#}}::KroneckerDelta;
+{e_{a b c}}::EpsilonTensor(delta=d);
+
+ct := ct = \cos{\vartheta};
+st := st = \sin{\vartheta};
+rota := R_{a j} = ct d_{a j} + (1-ct) n_{a} n_{j} - st e_{a j k} n_{k};
+uni_n := n_{k} n_{k} = 1;
+
+#####################################################################
+
+FSO := FSO = R_{j j} R_{k k} + R_{j k} R_{k j} - 2/3 R_{j k} R_{j k};
+substitute(_, rota); distribute(_, repeat=True);\
+epsilon_to_delta(_, repeat=True); expand_delta(_, repeat=True);\
+distribute(_, repeat=True); eliminate_kronecker(_, repeat=True);\
+substitute(_, uni_n, repeat=True);\
+collect_factors(_); sort_product(_); sort_sum(_);\
+meld(_);\
+substitute(_, $(st)**2 = 1 - (ct)**2=1$, repeat=True);
+
+TSO :=  TSO_{a} = 2 e_{a b c} R_{c j} (d_{b j} R_{k k} + R_{j b});
+substitute(_, $R_{k k} -> 2ct + 1$);\
+substitute(_, rota); distribute(_, repeat=True);\
+epsilon_to_delta(_, repeat=True); expand_delta(_, repeat=True);\
+distribute(_, repeat=True); eliminate_kronecker(_, repeat=True);\
+substitute(_, uni_n, repeat=True);\
+collect_factors(_); sort_product(_); sort_sum(_);\
+meld(_);\
+factor_out(_, $n_{a}, st, 4$);\
+;

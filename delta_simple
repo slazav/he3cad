@@ -1,0 +1,34 @@
+#!/usr/bin/cadabra2
+
+{a,b,c,i,j,k}::Indices;
+{a,b,c,i,j,k}::Integer(0..2);
+\nabla{#}::Derivative;
+
+{d{#}}::KroneckerDelta;
+{e_{a b c}}::EpsilonTensor(delta=d);
+
+ex :=  d_{k k};
+eliminate_kronecker(_);
+
+ex :=  d_{k j} d_{j 2};
+eliminate_kronecker(_);
+
+ex :=  e_{k k j};
+meld(_);
+
+ex :=  e_{a b c} n_{a} n_{b};
+meld(_);
+
+
+uni_n := n_{k} n_{k} = 1;
+
+ex :=  n_{a} n_{a};
+substitute(_, uni_n);
+
+ex :=  n_{a} \nabla{n_{a}};
+substitute(_, uni_n);
+
+### w/o meld
+
+ex :=  e_{a b c} n_{a} n_{b} + e_{b c a} n_{a} n_{b} + e_{c a b} n_{a} n_{b} + e_{c a a} n_{b} n_{b};
+canonicalise(_);
